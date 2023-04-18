@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="container my-5">
+  <h1>Images Uploader</h1>
+  {% if success %}
+    <div class="alert {{ alert_class }}" role="alert">
+      {{ success }}
+    </div>
+  {% endif %}
+  <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+    <div class="custom-file">
+      <input type="file" class="custom-file-input" id="file-input" name="file" required>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Upload</button>
+  </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  // Update the file label when a file is selected
+  $('#file-input').on('change', function() {
+    var filename = $(this).val().split('\\').pop();
+    $(this).next('.custom-file-label').html(filename);
+  });
+</script>
+{% endblock %}

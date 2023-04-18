@@ -1,0 +1,11 @@
+---
+version: '3.7'
+
+services:
+  app:
+    image: "images-uploader"
+    container_name: "images-uploader"
+    ports:
+      - 8889:8889/tcp
+    volumes:
+      - ./files:/usr/src/app/files

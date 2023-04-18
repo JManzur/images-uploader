@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1 style="margin: 20px;">Static Images:</h1>
+<div style="margin: 20px;">
+  {% for filename in filenames %}
+    <p>{{ filename }}</p>
+    <img src="{{ url_for('serve_static_image', filename=filename) }}" style="margin-bottom: 20px;" />
+  {% endfor %}
+</div>
+{% endblock %}
