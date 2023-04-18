@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE="images-uploader"
+IMAGE="jmanzur/images-uploader:latest"
 PORT="8889"
 
 echo "Stopping and removing container: $IMAGE"

@@ -31,11 +31,13 @@ def upload():
 
 @app.route('/images/<filename>')
 def serve_image(filename):
+    if filename == '.placeholder':
+        return '', 204
     return send_from_directory('files', filename)
 
 @app.route('/images')
 def images():
-    filenames = os.listdir('files')
+    filenames = [f for f in os.listdir('files') if f != '.placeholder']
     return render_template('images.html', filenames=filenames)
 
 @app.route('/static/<filename>')
