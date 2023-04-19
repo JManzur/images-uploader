@@ -20,7 +20,7 @@ def upload():
     file = request.files['file']
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save('files/' + filename)
+        file.save('images/' + filename)
         success_message = f'File "{filename}" uploaded successfully!'
         alert_class = 'alert-success'
     else:
@@ -33,11 +33,11 @@ def upload():
 def serve_image(filename):
     if filename == '.placeholder':
         return '', 204
-    return send_from_directory('files', filename)
+    return send_from_directory('images', filename)
 
 @app.route('/images')
 def images():
-    filenames = [f for f in os.listdir('files') if f != '.placeholder']
+    filenames = [f for f in os.listdir('images') if f != '.placeholder']
     return render_template('images.html', filenames=filenames)
 
 @app.route('/static/<filename>')
@@ -46,7 +46,7 @@ def serve_static_image(filename):
 
 @app.route('/static')
 def static_images():
-    filenames = os.listdir('static')
+    filenames = [f.name for f in os.scandir('static') if f.is_file()]
     return render_template('static.html', filenames=filenames)
 
 @app.route('/status', methods=['GET'])
