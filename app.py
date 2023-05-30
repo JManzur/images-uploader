@@ -1,10 +1,23 @@
 from flask import Flask, render_template, request, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 import socket, os
+from logging_config import configure_logging
 
 HOSTNAME = socket.gethostname()
 
 app = Flask(__name__)
+
+logger = configure_logging()
+
+@app.after_request
+def log_request(response):
+    logger.info(
+        f"Source IP: {request.remote_addr}, "
+        f"Method: {request.method}, "
+        f"Path: {request.path}, "
+        f"Status: {response.status_code}"
+    )
+    return response
 
 @app.route('/')
 def index():
