@@ -37,7 +37,7 @@ jobs:
       uses: snyk/actions/docker@master
       continue-on-error: true
       with:
-        image: images-uploader:${{ github.run_number }}
+        image: ${{ secrets.DOCKERHUB_USERNAME }}/images-uploader:${{ github.run_number }}
         args: --file=Dockerfile --severity-threshold=high --sarif-file-output=snyk.sarif
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
