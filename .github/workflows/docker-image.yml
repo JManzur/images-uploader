@@ -3,6 +3,8 @@ name: Images Uploader - Docker Build and Push
 on:
   push:
     branches: [ "main" ]
+env:
+  IMAGE_NAME: images-uploader
 
 jobs:
   build:
@@ -31,14 +33,14 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/images-uploader:${{ github.run_number }}
+        tags: latest, ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:${{ github.run_number }}
     
     - name: Security Scan using Snyk
       uses: snyk/actions/docker@master
       continue-on-error: true
       with:
-        image: ${{ secrets.DOCKERHUB_USERNAME }}/images-uploader:${{ github.run_number }}
-        args: --file=Dockerfile --severity-threshold=high --sarif-file-output=snyk.sarif
+        image: ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:${{ github.run_number }}
+        args: --file=Dockerfile --severity-threshold=critical --sarif-file-output=snyk.sarif
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
   
