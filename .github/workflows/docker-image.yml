@@ -27,6 +27,9 @@ jobs:
     - name: Set up Docker Buildx # https://github.com/marketplace/actions/docker-buildx-bake
       uses: docker/setup-buildx-action@v2
 
+    - name: Dump strategy context
+      run: echo "Building the image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}"
+    
     - name: Build and push
       uses: docker/build-push-action@v4
       with:
