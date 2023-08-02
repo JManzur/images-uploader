@@ -15,7 +15,7 @@ backup_count = 5  # Number of backup files to keep
 def configure_logging():
     handler = RotatingFileHandler(log_file, maxBytes=max_file_size, backupCount=backup_count)
     handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(module)s:%(lineno)d - %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     handler.setFormatter(formatter)
 
     logger = logging.getLogger(__name__)
