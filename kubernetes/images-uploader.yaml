@@ -6,7 +6,7 @@ metadata:
   name: efs-csi-demo
 ---
 # StorageClass
-apiVersion: v1
+apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   namespace: efs-csi-demo
