@@ -3,6 +3,13 @@ name: Docker Build and Push
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - '**/README.md'
+      - 'images/**'
+      - 'kubernetes/**'
+      - 'rebuild_image.sh'
+      - 'docker-compose.yml'
+
 env:
   IMAGE_NAME: images-uploader
 
