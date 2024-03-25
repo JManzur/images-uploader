@@ -1,0 +1,112 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: efs-csi-demo
+---
+# StorageClass
+apiVersion: v1
+kind: StorageClass
+metadata:
+  namespace: efs-csi-demo
+  name: efs-sc
+provisioner: efs.csi.aws.com
+---
+# PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: efs-csi-demo
+  name: efs-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-4af69aab
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: efs-csi-demo
+  name: efs-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 5Gi
+---
+# StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: efs-csi-demo
+  name: efs-app-sts
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: images-uploader
+  serviceName: efs-app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: images-uploader
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: linux
+        image: jmanzur/images-uploader:latest
+        volumeMounts:
+        - name: efs-storage
+          mountPath: /usr/src/app/images
+      volumes:
+      - name: efs-storage
+        persistentVolumeClaim:
+          claimName: efs-claim
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: efs-csi-demo
+  name: service-images-uploader
+spec:
+  ports:
+    - port: 80
+      targetPort: 8889
+      protocol: TCP
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: images-uploader
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: efs-csi-demo
+  name: ingress-images-uploader
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: service-images-uploader
+              port:
+                number: 80
